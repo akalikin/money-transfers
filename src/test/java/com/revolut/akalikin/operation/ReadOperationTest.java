@@ -2,6 +2,7 @@ package com.revolut.akalikin.operation;
 
 import com.revolut.akalikin.data.InMemoryStore;
 import com.revolut.akalikin.data.Store;
+import com.revolut.akalikin.exception.AccountAlreadyExistsException;
 import com.revolut.akalikin.exception.AccountNotFoundException;
 import com.revolut.akalikin.exception.InvalidRequestException;
 import com.revolut.akalikin.model.Account;
@@ -21,7 +22,7 @@ public class ReadOperationTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void readAllAccountsOperationReturnsAccountsAsExpected() {
+    public void readAllAccountsOperationReturnsAccountsAsExpected() throws AccountAlreadyExistsException {
         // Given
         Store store = new InMemoryStore();
         ReadOperation readOperation = new ReadOperation(store);
@@ -52,7 +53,7 @@ public class ReadOperationTest {
     }
 
     @Test
-    public void readAccountReturnsTheCorrectAccount() throws InvalidRequestException, AccountNotFoundException {
+    public void readAccountReturnsTheCorrectAccount() throws InvalidRequestException, AccountNotFoundException, AccountAlreadyExistsException {
         // Given
         Store store = new InMemoryStore();
         ReadOperation readOperation = new ReadOperation(store);

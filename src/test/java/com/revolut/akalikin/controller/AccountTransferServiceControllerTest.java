@@ -44,7 +44,7 @@ public class AccountTransferServiceControllerTest {
     }
 
     @Test
-    public void readOperationsReturnExpectedAccount() {
+    public void readOperationsReturnExpectedAccount() throws AccountAlreadyExistsException {
         //Given
         AccountTransferServiceController controller = new AccountTransferServiceController(readOperation, transferOperation, writeOperation);
         Account foo = new Account("foo", 1337L);
@@ -126,7 +126,7 @@ public class AccountTransferServiceControllerTest {
     }
 
     @Test
-    public void transferOperationMovesMoneyCorrectly() throws AccountNotFoundException {
+    public void transferOperationMovesMoneyCorrectly() throws AccountNotFoundException, AccountAlreadyExistsException {
         //Given
         AccountTransferServiceController controller = new AccountTransferServiceController(readOperation, transferOperation, writeOperation);
         Account from = new Account("from", 1000L);
@@ -144,7 +144,7 @@ public class AccountTransferServiceControllerTest {
     }
 
     @Test
-    public void transferOperationInsufficientFunds() throws AccountNotFoundException {
+    public void transferOperationInsufficientFunds() throws AccountNotFoundException, AccountAlreadyExistsException {
         //Given
         AccountTransferServiceController controller = new AccountTransferServiceController(readOperation, transferOperation, writeOperation);
         Account from = new Account("from", 0L);
@@ -164,7 +164,7 @@ public class AccountTransferServiceControllerTest {
     }
 
     @Test
-    public void transferOperationWrongAmount() throws AccountNotFoundException {
+    public void transferOperationWrongAmount() throws AccountNotFoundException, AccountAlreadyExistsException {
         //Given
         AccountTransferServiceController controller = new AccountTransferServiceController(readOperation, transferOperation, writeOperation);
         Account from = new Account("from", 0L);

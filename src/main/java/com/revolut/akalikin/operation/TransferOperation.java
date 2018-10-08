@@ -6,6 +6,7 @@ import com.revolut.akalikin.data.Store;
 import com.revolut.akalikin.exception.AccountInsufficientFundsException;
 import com.revolut.akalikin.exception.InvalidRequestException;
 import com.revolut.akalikin.exception.PermanentException;
+import com.revolut.akalikin.exception.TransferRequestForTheSameAccountException;
 import com.revolut.akalikin.exception.TransientException;
 import com.revolut.akalikin.model.Account;
 
@@ -43,8 +44,8 @@ public class TransferOperation {
             from.deductFunds(amount);
             to.addFunds(amount);
 
-            accountStore.storeAccount(from);
-            accountStore.storeAccount(to);
+            accountStore.storeAccount(from, true);
+            accountStore.storeAccount(to, true);
         } finally {
             lockHolder.releaseLock(fromId);
             lockHolder.releaseLock(toId);
@@ -53,6 +54,9 @@ public class TransferOperation {
     }
 
     private void validateRequest(String fromId, String toId, Long amount) throws InvalidRequestException {
+        if (fromId.equals(toId)) {
+            throw new TransferRequestForTheSameAccountException(fromId);
+        }
         validateId(fromId);
         validateId(toId);
         validateAmount(amount);

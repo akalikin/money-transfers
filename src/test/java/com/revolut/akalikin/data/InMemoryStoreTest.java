@@ -1,5 +1,6 @@
 package com.revolut.akalikin.data;
 
+import com.revolut.akalikin.exception.AccountAlreadyExistsException;
 import com.revolut.akalikin.exception.AccountNotFoundException;
 import com.revolut.akalikin.model.Account;
 import org.junit.Rule;
@@ -16,7 +17,7 @@ public class InMemoryStoreTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void storesTheAccount() throws AccountNotFoundException {
+    public void storesTheAccount() throws AccountNotFoundException, AccountAlreadyExistsException {
         // Given
         Store store = new InMemoryStore();
         Account foo = new Account("foo", 100L);
@@ -30,7 +31,7 @@ public class InMemoryStoreTest {
     }
 
     @Test
-    public void storesMultipleAccounts() throws AccountNotFoundException {
+    public void storesMultipleAccounts() throws AccountNotFoundException, AccountAlreadyExistsException {
         // Given
         Store store = new InMemoryStore();
         Account foo = new Account("foo", 100L);
@@ -46,14 +47,31 @@ public class InMemoryStoreTest {
     }
 
     @Test
-    public void overwritesAnExistingAccount() throws AccountNotFoundException {
+    public void throwsWhenAccountAlreadyExists() throws AccountNotFoundException, AccountAlreadyExistsException {
+        // Given
+        Store store = new InMemoryStore();
+        Account foo = new Account("foo", 100L);
+        store.storeAccount(foo);
+
+        // Then - expected exception
+        expectedException.expect(AccountAlreadyExistsException.class);
+
+        // When
+        store.storeAccount(new Account("foo", 105L));
+
+        // Then - original balance
+        assertThat(store.getAccount("foo").getBalance(), equalTo(100L));
+    }
+
+    @Test
+    public void updatesAccountWhenFlagIsProvided() throws AccountNotFoundException, AccountAlreadyExistsException {
         // Given
         Store store = new InMemoryStore();
         Account foo = new Account("foo", 100L);
         store.storeAccount(foo);
 
         // When
-        store.storeAccount(new Account("foo", 105L));
+        store.storeAccount(new Account("foo", 105L), true);
 
         // Then
         assertThat(store.getAccount("foo").getBalance(), equalTo(105L));

@@ -32,6 +32,11 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.OK;
 import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 
+/**
+ * Controller for the available APIs.
+ * Very useful additions would be Logging, such as request logging;
+ * and Metrics for response counts, operation latencies etc.
+ */
 @Path("v1")
 public class AccountTransferServiceController {
 

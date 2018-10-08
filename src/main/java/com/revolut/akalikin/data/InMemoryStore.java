@@ -2,6 +2,7 @@ package com.revolut.akalikin.data;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Singleton;
+import com.revolut.akalikin.exception.AccountAlreadyExistsException;
 import com.revolut.akalikin.exception.AccountNotFoundException;
 import com.revolut.akalikin.model.Account;
 
@@ -15,7 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * I probably misunderstood the suggestion in the task description,
  * and used an in-memory map instead of an in-memory database,
- * but to my judgement and in-memory database would only increase the complexity of the task.
+ * but to my judgement an in-memory database would only help with account locking and atomic transactions
+ * but increase the complexity of the task.
  */
 @Singleton
 public class InMemoryStore implements Store {
@@ -40,7 +42,15 @@ public class InMemoryStore implements Store {
     }
 
     @Override
-    public void storeAccount(Account account) {
+    public void storeAccount(Account account, boolean update) throws AccountAlreadyExistsException {
+        if (!update && accounts.containsKey(account.getAccountId())) {
+            throw new AccountAlreadyExistsException(account.getAccountId());
+        }
         accounts.put(account.getAccountId(), account);
+    }
+
+    @Override
+    public void storeAccount(Account account) throws AccountAlreadyExistsException {
+        storeAccount(account, false);
     }
 }
